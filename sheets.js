@@ -95,36 +95,34 @@ exports.saveDevSolutions = function(auth) {
     const rows = res.data.values;
 
     let newRecords = 0;
-    let rowNum = 0;
 
-    while(rowNum < rows.length){
-      rows.forEach(function(row){
-        rowNum++;
+    rows.forEach(function(row){
+      if(row[0] != ""){
         Solution.findOne({solutionName: row[2]}).exec(function(err,result){
           if (!result){
             newRecords++
             Solution.create({
               modified: row[0],
-            	technology: row[1],
-            	solutionName: row[2],
-            	developer: row[3],
+              technology: row[1],
+              solutionName: row[2],
+              developer: row[3],
               status: row[4],
               link: row[5],
               notes: row[6],
-            	approvals: row[7],
-            	price: row[8],
-            	speed: row[9],
-            	availability: row[10],
-            	easeOfUse: row[11],
-            	specificity: row[12],
-            	sensitivity: row[13],
-            	limitOfDetection: row[14],
-            	accuracy: row[15]
+              approvals: row[7],
+              price: row[8],
+              speed: row[9],
+              availability: row[10],
+              easeOfUse: row[11],
+              specificity: row[12],
+              sensitivity: row[13],
+              limitOfDetection: row[14],
+              accuracy: row[15]
             });
           }
-        });
-      });
-    }
+        });  
+      }
+    });
 
     setTimeout(() => {
       logger.info("Records Added: " + newRecords)

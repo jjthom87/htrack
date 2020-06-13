@@ -3,6 +3,21 @@ require('dotenv').config();
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 
+const pino = require('pino');
+
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  prettyPrint: true
+});
+
+var express = require('express');
+var app = express();
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require(`./${process.env.APP_ENV}-swagger.json`);
+
+app.use(morgan('combined'));
+
 const aws = require('aws-sdk');
 const s3 = new aws.S3();
 const BUCKET = process.env.S3_BUCKET_NAME;
@@ -27,6 +42,31 @@ var PORT = process.env.PORT || 7000;
 setTimeout(() => {
   const props = require('./application.json');
 
+  if(fs.existsSync(path.join(__dirname, "application.json"))){
+    s3.getObject({
+      Bucket: BUCKET,
+      Key: "application.json"
+    }, (err, data) => {
+      if (err) console.error(err);
+      if(JSON.stringify(JSON.parse(data.Body.toString())) != JSON.stringify(props)){
+        var params = {Bucket: BUCKET, Key: "application.json", Body: ''};
+      	var fileStream = fs.createReadStream(path.join(__dirname, 'application.json'));
+      	fileStream.on('error', function(err) {
+      	  console.log('File Error', err);
+      	});
+      	params.Body = fileStream;
+
+      	s3.upload(params, function(err, data) {
+      		if(err){
+      			logger.error("Error uploading updated application.json")
+      		} else {
+      			logger.info("Uploaded updated application.json successfully")
+      		}
+      	});
+      }
+    });
+  }
+
   const devDb = `mongodb://${props.db.dev.username}:${encodeURIComponent(props.db.dev.password)}@${props.db.dev.url}`
   const prodDb = `mongodb://${props.db.prod.username}:${encodeURIComponent(props.db.prod.password)}@${props.db.prod.url}`
 
@@ -45,21 +85,6 @@ setTimeout(() => {
   // process.env.MONGODB_URI ||
   // process.env.MONGOHQ_URL ||
   // "mongodb://localhost:27017/humanitrack";
-
-  const pino = require('pino');
-
-  const logger = pino({
-    level: process.env.LOG_LEVEL || 'info',
-    prettyPrint: true
-  });
-
-  var express = require('express');
-  var app = express();
-
-  const swaggerUi = require('swagger-ui-express');
-  const swaggerDocument = require(`./${process.env.APP_ENV}-swagger.json`);
-
-  app.use(morgan('combined'));
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
