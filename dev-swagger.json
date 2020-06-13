@@ -9,7 +9,7 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "stark-forest-67206.herokuapp.com/",
+  "host": "stark-forest-67206.herokuapp.com",
   "basePath": "/v1/api",
   "tags": [
     {
