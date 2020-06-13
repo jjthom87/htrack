@@ -22,6 +22,8 @@ secretsFiles.forEach((file) => {
   }
 });
 
+var PORT = process.env.PORT || 7000;
+
 setTimeout(() => {
   const props = require('./application.json');
 
@@ -30,7 +32,7 @@ setTimeout(() => {
 
   const Sheets = require('./sheets');
 
-  var db = process.env.APP_ENV == "dev" ? devDb : prodDb;
+  var db = process.env.APP_ENV == "dev" || "local" ? devDb : prodDb;
 
   mongoose.connect(db, function(err,res){
   	if(err){
@@ -56,8 +58,6 @@ setTimeout(() => {
 
   const swaggerUi = require('swagger-ui-express');
   const swaggerDocument = require(`./${process.env.APP_ENV}-swagger.json`);
-
-  var PORT = process.env.PORT || 7000;
 
   app.use(morgan('combined'));
 
