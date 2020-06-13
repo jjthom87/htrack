@@ -32,7 +32,7 @@ setTimeout(() => {
 
   const Sheets = require('./sheets');
 
-  var db = process.env.APP_ENV == "dev" || "local" ? devDb : prodDb;
+  var db = process.env.APP_ENV == "dev" || process.env.APP_ENV == "local" ? devDb : prodDb;
 
   mongoose.connect(db, function(err,res){
   	if(err){
