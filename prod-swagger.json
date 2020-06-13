@@ -1,0 +1,197 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Humanitrack API",
+    "description": "Humanitrack API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:7000",
+  "basePath": "/v1/api",
+  "tags": [
+    {
+      "name": "Network",
+      "description": "API for companies in the Network"
+    },
+    {
+      "name": "Disease Diagnostics Solutions",
+      "description": "API For Disease Diagnostics Solutions"
+    },
+    {
+      "name": "Software Solutions",
+      "description": "API For Software Solutions"
+    },
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/network": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Get Network Information",
+        "responses": {
+          "200": {
+            "description": "Networks Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Update Network Information",
+        "responses": {
+          "200": {
+            "description": "Network(s) Updated"
+          }
+        }
+      }
+    },
+    "/network/join": {
+      "put": {
+        "path": "/join",
+        "tags": [
+          "Network"
+        ],
+        "summary": "Join Network with Solutions",
+        "responses": {
+          "200": {
+            "description": "Networks(s) Updated"
+          }
+        }
+      }
+    },
+    "/solutions/disease-diagnostics": {
+      "get": {
+        "tags": [
+          "Disease Diagnostics Solutions"
+        ],
+        "summary": "Get Disease Diagnostics Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Disease Diagnostics Solutions Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Disease Diagnostics Solutions"
+        ],
+        "summary": "Update Disease Diagnostics Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Disease Diagnostics Solution(s) Updated"
+          }
+        }
+      }
+    },
+    "/solutions/software": {
+      "get": {
+        "tags": [
+          "Software Solutions"
+        ],
+        "summary": "Get Software Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Software Solutions Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Software Solutions"
+        ],
+        "summary": "Update Software Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Software Solution(s) Updated"
+          }
+        }
+      }
+    },
+    "/solutions/patient-treatment": {
+      "get": {
+        "tags": [
+          "Patient Treatment Solutions"
+        ],
+        "summary": "Get Patient Treatment Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Patient Treatment Solutions Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Patient Treatment Solutions"
+        ],
+        "summary": "Update Patient Treatment Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Patient Treatment Solution(s) Updated"
+          }
+        }
+      }
+    },
+    "/solutions/medical-supplies": {
+      "get": {
+        "tags": [
+          "Medical Supplies Solutions"
+        ],
+        "summary": "Get Medical Supplies Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Medical Supplies Solutions Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Medical Supplies Solutions"
+        ],
+        "summary": "Update Medical Supplies Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Medical Supplies Solution(s) Updated"
+          }
+        }
+      }
+    },
+    "/solutions/vaccines": {
+      "get": {
+        "tags": [
+          "Vaccine Solutions"
+        ],
+        "summary": "Get Vaccine Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Vaccine Solutions Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Vaccine Solutions"
+        ],
+        "summary": "Update Vaccine Solutions Information",
+        "responses": {
+          "200": {
+            "description": "Vaccine Solution(s) Updated"
+          }
+        }
+      }
+    }
+  }
+}
