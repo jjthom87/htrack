@@ -14,7 +14,14 @@ var express = require('express');
 var app = express();
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require(`./${process.env.APP_ENV}-swagger.json`);
+const swaggerDocument = require(`./${process.env.APP_ENV == "local" ? "dev" : process.env.APP_ENV}-swagger.json`);
+if(process.env.APP_ENV == "local"){
+  swaggerDocument.host = "localhost:7000"
+  swaggerDocument.schemes[0] = "http"
+} else if (process.env.APP_ENV == "dev"){
+  swaggerDocument.host = "stark-forest-67206.herokuapp.com"
+  swaggerDocument.schemes[0] = "https"
+}
 
 app.use(morgan('combined'));
 
@@ -76,15 +83,11 @@ setTimeout(() => {
 
   mongoose.connect(db, function(err,res){
   	if(err){
-  		logger.error(`Error connecting to ${process.env.APP_ENV} database: ${err}`);
+  		logger.error(`Error connecting to ${process.env.APP_ENV == "dev" || process.env.APP_ENV == "local" ? "dev" : "prod"} database: ${err}`);
   	} else {
-  		logger.info(`Succeeded connecting to ${process.env.APP_ENV} database`);
+  		logger.info(`Succeeded connecting to ${process.env.APP_ENV == "dev" || process.env.APP_ENV == "local" ? "dev" : "prod"} database`);
   	}
   });
-
-  // process.env.MONGODB_URI ||
-  // process.env.MONGOHQ_URL ||
-  // "mongodb://localhost:27017/humanitrack";
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -114,7 +117,11 @@ setTimeout(() => {
       }
 
       // Authorize a client with credentials, then call the Google Sheets API.
-      const sheetsResponse = Sheets.authorize(JSON.parse(content), Sheets.saveNetwork);
+      if(process.env.APP_ENV == "prod"){
+        const sheetsResponse = Sheets.authorize(JSON.parse(content), Sheets.saveNetwork);
+      } else {
+        const sheetsResponse = Sheets.authorize(JSON.parse(content), Sheets.saveDevNetwork);
+      }
 
       res.status(200).json({success: true})
     });

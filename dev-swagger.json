@@ -9,16 +9,19 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "stark-forest-67206.herokuapp.com",
+  "host": "",
   "basePath": "/v1/api",
   "tags": [
     {
       "name": "Solution",
       "description": "API for Playground Solutions"
+    },
+    {
+      "name": "Network",
+      "description": "API for Playground Companies in the Network"
     }
   ],
   "schemes": [
-    "https"
   ],
   "consumes": [
     "application/json"
@@ -47,6 +50,30 @@
         "responses": {
           "200": {
             "description": "Solution(s) Updated"
+          }
+        }
+      }
+    },
+    "/network": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Get Network Information",
+        "responses": {
+          "200": {
+            "description": "Networks Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Update Network Information",
+        "responses": {
+          "200": {
+            "description": "Network(s) Updated"
           }
         }
       }

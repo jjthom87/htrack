@@ -13,6 +13,7 @@ const logger = pino({
 
 //dev
 var Solution = require('./devModels/Solutions.model');
+var DevNetwork = require('./devModels/Network.model');
 
 //prod
 var Network = require('./models/Network.model');
@@ -120,7 +121,7 @@ exports.saveDevSolutions = function(auth) {
               accuracy: row[15]
             });
           }
-        });  
+        });
       }
     });
 
@@ -138,6 +139,50 @@ exports.getDevSolutions = function(req, res, next){
   });
 }
 
+//
+
+exports.saveDevNetwork = function(auth) {
+  const sheetId = props.sheets.dev.networkSheetId
+  const range = props.sheets.dev.networkRange
+
+  const sheets = google.sheets({version: 'v4', auth});
+  sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: range,
+  }, (err, res) => {
+    if (err){
+      logger.error("error: " + err)
+    }
+    const rows = res.data.values;
+
+    let newRecords = 0;
+
+    rows.forEach(function(row){
+      DevNetwork.findOne({name: row[3]}).exec(function(err,result){
+        if (!result){
+          newRecords++
+          DevNetwork.create({
+            modified: row[0],
+            category: row[1],
+            type: row[2],
+            name: row[3],
+            link: row[4],
+            cityState: row[5],
+            country: row[6],
+            tagOne: row[7],
+            tagTwo: row[8]
+          });
+        }
+      });
+    });
+
+    setTimeout(() => {
+      logger.info("Records Added: " + newRecords)
+    }, 3000)
+
+  });
+}
+
 //prod
 
 /**
@@ -146,12 +191,13 @@ exports.getDevSolutions = function(req, res, next){
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
 exports.saveNetwork = function(auth) {
-  const sheetId = process.env.APP_ENV == "dev" ? props.sheets.dev.networkSheetId : props.sheets.prod.networkSheetId
+  const sheetId = props.sheets.prod.networkSheetId
+  const range = props.sheets.prod.networkRange
 
   const sheets = google.sheets({version: 'v4', auth});
   sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'Network!A10:E',
+    range: range,
   }, (err, res) => {
     if (err){
       logger.error("error: " + err)
@@ -159,25 +205,22 @@ exports.saveNetwork = function(auth) {
     const rows = res.data.values;
 
     let newRecords = 0;
-    let rowNum = 0;
 
-    while(rowNum < rows.length){
-      rows.forEach(function(row){
-        rowNum++;
-        Network.findOne({name: row[3]}).exec(function(err,result){
-          if (!result){
-            newRecords++
-            Network.create({
-              modified: row[0],
-              category: row[1],
-              type: row[2],
-              name: row[3],
-              link: row[4]
-            });
-          }
-        });
+    rows.forEach(function(row){
+      rowNum++;
+      Network.findOne({name: row[3]}).exec(function(err,result){
+        if (!result){
+          newRecords++
+          Network.create({
+            modified: row[0],
+            category: row[1],
+            type: row[2],
+            name: row[3],
+            link: row[4]
+          });
+        }
       });
-    }
+    });
 
     setTimeout(() => {
       logger.info("Records Added: " + newRecords)
@@ -187,10 +230,17 @@ exports.saveNetwork = function(auth) {
 }
 
 exports.getNetwork = function(req, res, next){
-  Network.find({}).sort({name: 1}).exec(function(err, result) {
-    if (err) throw err;
-    res.json(result);
-  });
+  if(process.env.APP_ENV == "prod"){
+    Network.find({}).sort({name: 1}).exec(function(err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+  } else {
+    DevNetwork.find({}).sort({name: 1}).exec(function(err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+  }
 }
 
 //
