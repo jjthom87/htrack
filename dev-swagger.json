@@ -77,6 +77,20 @@
           }
         }
       }
+    },
+    "/network/join": {
+      "put": {
+        "path": "/join",
+        "tags": [
+          "Network"
+        ],
+        "summary": "Join Network with Solutions",
+        "responses": {
+          "200": {
+            "description": "Networks(s) Updated"
+          }
+        }
+      }
     }
   }
 }

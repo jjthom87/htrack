@@ -135,7 +135,7 @@ exports.saveDevSolutions = function(auth) {
 exports.getDevSolutions = function(req, res, next){
   Solution.find({}).sort({name: 1}).exec(function(err, result) {
     if (err) throw err;
-    res.json(result);
+    res.json({resultCount: result.length, result: result});
   });
 }
 
@@ -233,12 +233,12 @@ exports.getNetwork = function(req, res, next){
   if(process.env.APP_ENV == "prod"){
     Network.find({}).sort({name: 1}).exec(function(err, result) {
       if (err) throw err;
-      res.json(result);
+      res.json({resultCount: result.length, result: result});
     });
   } else {
     DevNetwork.find({}).sort({name: 1}).exec(function(err, result) {
       if (err) throw err;
-      res.json(result);
+      res.json({resultCount: result.length, result: result});
     });
   }
 }
@@ -500,229 +500,279 @@ exports.getVaccineSolution = function(req, res, next){
 //
 
 exports.joinNetworkSolutions = function(req, res, next){
-  var totalResults = [];
-  let newDDRecords = 0;
-  let newSRecords = 0;
-  let newPTRecords = 0;
-  let newMSRecords = 0;
-  let newVRecords = 0;
+  if(process.env.APP_ENV == "dev" || process.env.APP_ENV == "local"){
+    let newDevRecords = 0;
 
-  DiseaseDiagnosticsSolution.aggregate([
-     {
-       $lookup:
-         {
-           from: "networks",
-           localField: "developer",
-           foreignField: "name",
-           as: "network_info"
-         }
-    },
-    {
-      $match:
+    Solution.aggregate([
+       {
+         $lookup:
+           {
+             from: "devNetwork",
+             localField: "developer",
+             foreignField: "name",
+             as: "network_info"
+           }
+      },
       {
-        "network_info":
+        $match:
         {
-          $size: 0
+          "network_info":
+          {
+            $size: 0
+          }
+        }
+      },
+      {
+        $project:
+        {
+          'network_info' : 0,
+          "_id": 0
         }
       }
-    },
-    {
-      $project:
-      {
-        'network_info' : 0,
-        "_id": 0
-      }
-    }
-  ]).exec(function(err, result) {
-     if (err) throw err;
-     var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
+    ]).exec(function(err, result) {
+       if (err) throw err;
+       var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
 
-     resultsNoDuplicates.forEach((a) => {
-       newDDRecords++;
-       Network.create({
-         name: a.developer,
-         link: a.link
-       });
-       totalResults.push(a)
-     })
-     setTimeout(() => {
-       logger.info("Disease Diagnostics Records Added: " + newDDRecords);
-     }, 100)
-  });
+       resultsNoDuplicates.forEach((a) => {
+         newDevRecords++;
+         DevNetwork.create({
+           name: a.developer,
+           link: a.link
+         });
+       })
+       setTimeout(() => {
+         logger.info("Solution Network Records Added: " + newDevRecords);
+       }, 100)
 
-  SoftwareSolution.aggregate([
-     {
-       $lookup:
-         {
-           from: "networks",
-           localField: "developer",
-           foreignField: "name",
-           as: "network_info"
-         }
-    },
-    {
-      $match:
+       setTimeout(() => {
+         res.json({success: true, solutionRecordsAdded: newDevRecords})
+       }, 1000)
+    });
+  } else {
+    var totalResults = [];
+    let newDDRecords = 0;
+    let newSRecords = 0;
+    let newPTRecords = 0;
+    let newMSRecords = 0;
+    let newVRecords = 0;
+
+    DiseaseDiagnosticsSolution.aggregate([
+       {
+         $lookup:
+           {
+             from: "networks",
+             localField: "developer",
+             foreignField: "name",
+             as: "network_info"
+           }
+      },
       {
-        "network_info":
+        $match:
         {
-          $size: 0
+          "network_info":
+          {
+            $size: 0
+          }
+        }
+      },
+      {
+        $project:
+        {
+          'network_info' : 0,
+          "_id": 0
         }
       }
-    },
-    {
-      $project:
-      {
-        'network_info' : 0,
-        "_id": 0
-      }
-    }
-  ]).exec(function(err, result) {
-     if (err) throw err;
-     var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
+    ]).exec(function(err, result) {
+       if (err) throw err;
+       var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
 
-     resultsNoDuplicates.forEach((a) => {
-       newSRecords++;
-       Network.create({
-         name: a.developer,
-         link: a.link
-       });
-       totalResults.push(a)
-     })
-     setTimeout(() => {
-       logger.info("Software Records Added: " + newSRecords);
-     }, 100)
-  });
+       resultsNoDuplicates.forEach((a) => {
+         newDDRecords++;
+         Network.create({
+           name: a.developer,
+           link: a.link
+         });
+         totalResults.push(a)
+       })
+       setTimeout(() => {
+         logger.info("Disease Diagnostics Records Added: " + newDDRecords);
+       }, 100)
+    });
 
-  PatientTreatmentSolution.aggregate([
-     {
-       $lookup:
-         {
-           from: "networks",
-           localField: "developer",
-           foreignField: "name",
-           as: "network_info"
-         }
-    },
-    {
-      $match:
+    SoftwareSolution.aggregate([
+       {
+         $lookup:
+           {
+             from: "networks",
+             localField: "developer",
+             foreignField: "name",
+             as: "network_info"
+           }
+      },
       {
-        "network_info":
+        $match:
         {
-          $size: 0
+          "network_info":
+          {
+            $size: 0
+          }
+        }
+      },
+      {
+        $project:
+        {
+          'network_info' : 0,
+          "_id": 0
         }
       }
-    },
-    {
-      $project:
-      {
-        'network_info' : 0,
-        "_id": 0
-      }
-    }
-  ]).exec(function(err, result) {
-     if (err) throw err;
-     var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
+    ]).exec(function(err, result) {
+       if (err) throw err;
+       var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
 
-     resultsNoDuplicates.forEach((a) => {
-       newPTRecords++;
-       Network.create({
-         name: a.developer,
-         link: a.link
-       });
-       totalResults.push(a)
-     })
-     setTimeout(() => {
-       logger.info("Patient Treatment Solution Records Added: " + newPTRecords);
-     }, 100)
-  });
+       resultsNoDuplicates.forEach((a) => {
+         newSRecords++;
+         Network.create({
+           name: a.developer,
+           link: a.link
+         });
+         totalResults.push(a)
+       })
+       setTimeout(() => {
+         logger.info("Software Records Added: " + newSRecords);
+       }, 100)
+    });
 
-  MedicalSuppliesSolution.aggregate([
-     {
-       $lookup:
-         {
-           from: "networks",
-           localField: "developer",
-           foreignField: "name",
-           as: "network_info"
-         }
-    },
-    {
-      $match:
+    PatientTreatmentSolution.aggregate([
+       {
+         $lookup:
+           {
+             from: "networks",
+             localField: "developer",
+             foreignField: "name",
+             as: "network_info"
+           }
+      },
       {
-        "network_info":
+        $match:
         {
-          $size: 0
+          "network_info":
+          {
+            $size: 0
+          }
+        }
+      },
+      {
+        $project:
+        {
+          'network_info' : 0,
+          "_id": 0
         }
       }
-    },
-    {
-      $project:
-      {
-        'network_info' : 0,
-        "_id": 0
-      }
-    }
-  ]).exec(function(err, result) {
-     if (err) throw err;
-     var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
+    ]).exec(function(err, result) {
+       if (err) throw err;
+       var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
 
-     resultsNoDuplicates.forEach((a) => {
-       newMSRecords++;
-       Network.create({
-         name: a.developer,
-         link: a.link
-       });
-       totalResults.push(a)
-     })
-     setTimeout(() => {
-       logger.info("Medical Supplies Solution Records Added: " + newMSRecords);
-     }, 100)
-  });
+       resultsNoDuplicates.forEach((a) => {
+         newPTRecords++;
+         Network.create({
+           name: a.developer,
+           link: a.link
+         });
+         totalResults.push(a)
+       })
+       setTimeout(() => {
+         logger.info("Patient Treatment Solution Records Added: " + newPTRecords);
+       }, 100)
+    });
 
-  VaccineSolution.aggregate([
-     {
-       $lookup:
-         {
-           from: "networks",
-           localField: "developer",
-           foreignField: "name",
-           as: "network_info"
-         }
-    },
-    {
-      $match:
+    MedicalSuppliesSolution.aggregate([
+       {
+         $lookup:
+           {
+             from: "networks",
+             localField: "developer",
+             foreignField: "name",
+             as: "network_info"
+           }
+      },
       {
-        "network_info":
+        $match:
         {
-          $size: 0
+          "network_info":
+          {
+            $size: 0
+          }
+        }
+      },
+      {
+        $project:
+        {
+          'network_info' : 0,
+          "_id": 0
         }
       }
-    },
-    {
-      $project:
+    ]).exec(function(err, result) {
+       if (err) throw err;
+       var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
+
+       resultsNoDuplicates.forEach((a) => {
+         newMSRecords++;
+         Network.create({
+           name: a.developer,
+           link: a.link
+         });
+         totalResults.push(a)
+       })
+       setTimeout(() => {
+         logger.info("Medical Supplies Solution Records Added: " + newMSRecords);
+       }, 100)
+    });
+
+    VaccineSolution.aggregate([
+       {
+         $lookup:
+           {
+             from: "networks",
+             localField: "developer",
+             foreignField: "name",
+             as: "network_info"
+           }
+      },
       {
-        'network_info' : 0,
-        "_id": 0
+        $match:
+        {
+          "network_info":
+          {
+            $size: 0
+          }
+        }
+      },
+      {
+        $project:
+        {
+          'network_info' : 0,
+          "_id": 0
+        }
       }
-    }
-  ]).exec(function(err, result) {
-     if (err) throw err;
-     var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
+    ]).exec(function(err, result) {
+       if (err) throw err;
+       var resultsNoDuplicates = result.filter((v,i,a)=>a.findIndex(t=>(t.developer === v.developer))===i)
 
-     resultsNoDuplicates.forEach((a) => {
-       newVRecords++;
-       Network.create({
-         name: a.developer,
-         link: a.link
-       });
-       totalResults.push(a)
-     })
-     setTimeout(() => {
-       logger.info("Vaccine Solution Records Added: " + newVRecords);
-     }, 100)
-  });
+       resultsNoDuplicates.forEach((a) => {
+         newVRecords++;
+         Network.create({
+           name: a.developer,
+           link: a.link
+         });
+         totalResults.push(a)
+       })
+       setTimeout(() => {
+         logger.info("Vaccine Solution Records Added: " + newVRecords);
+       }, 100)
+    });
 
-  setTimeout(() => {
-    res.json({success: true, softwareRecords: newSRecords, diseaseDiagnosticRecords: newDDRecords, patientTreatmentRecords: newPTRecords, medicalSuppliesRecords: newMSRecords, vaccineRecords: newVRecords})
-  }, 1000)
+    setTimeout(() => {
+      res.json({success: true, softwareRecords: newSRecords, diseaseDiagnosticRecords: newDDRecords, patientTreatmentRecords: newPTRecords, medicalSuppliesRecords: newMSRecords, vaccineRecords: newVRecords})
+    }, 1000)
+  }
 }
