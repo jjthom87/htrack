@@ -1,5 +1,5 @@
-application.json
-token.json
-credentials.json
+resources/application.json
+resources/token.json
+resources/credentials.json
 .env
 node_modules

@@ -31,17 +31,6 @@
   ],
   "paths": {
     "/solution": {
-      "get": {
-        "tags": [
-          "Solution"
-        ],
-        "summary": "Get Solution Information",
-        "responses": {
-          "200": {
-            "description": "Solutions Found"
-          }
-        }
-      },
       "put": {
         "tags": [
           "Solution"
@@ -55,17 +44,6 @@
       }
     },
     "/network": {
-      "get": {
-        "tags": [
-          "Network"
-        ],
-        "summary": "Get Network Information",
-        "responses": {
-          "200": {
-            "description": "Networks Found"
-          }
-        }
-      },
       "put": {
         "tags": [
           "Network"
