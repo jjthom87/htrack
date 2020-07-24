@@ -1,8 +1,9 @@
-const {google} = require('googleapis');
-
 const props = require('./../../../../resources/application.json');
 const logger = require('./../../../../config/logging/logger.js');
+
+const sheets = require('./../../../../google_sheets/api/google_sheets_api.js');
 const Solution = require('./../../../../db/models/nonprod/Solutions.model');
+const Records = require('./../../../records.js');
 
 function getDevSolutions(req, res){
   Solution.find({}).sort({name: 1}).exec(function(err, result) {
@@ -11,23 +12,13 @@ function getDevSolutions(req, res){
   });
 }
 
-async function getDevSolutionRows(auth) {
-  const sheetId = props.sheets.dev.solutionSheetId;
-  const range = props.sheets.dev.solutionRange;
-
-  const sheets = google.sheets({ version: "v4", auth });
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: range,
-  });
-  return res.data.values;
-}
-
 async function saveDevSolutions(rows, cb){
-  rows.forEach(function(row, index, array){
+  const records = new Records();
+  await rows.forEach(function(row, index, array){
       if(row[0] != ""){
         Solution.findOne({solutionName: row[2]}).exec(function(err,result){
           if (!result){
+            records.newRecords++;
             Solution.create({
               modified: row[0],
               technology: row[1],
@@ -46,18 +37,21 @@ async function saveDevSolutions(rows, cb){
               limitOfDetection: row[14],
               accuracy: row[15]
             });
+          } else {
+            records.duplicateRecords++;
           }
-          if (index === array.length - 1){
-            cb();
-          }
+          records.saveRowsToCallback(array, cb)
         });
+      } else {
+        records.blankRecords++;
+        records.saveRowsToCallback(array, cb)
       }
     });
 }
 
 exports.main = async function(auth, req, res) {
-  const rows = await getDevSolutionRows(auth);
-  await saveDevSolutions(rows, () => {
-    getDevSolutions(req, res);
+  const rows = await sheets.getSheetValues(auth, props.sheets.dev.solutionSheetId, props.sheets.dev.solutionRange)
+  await saveDevSolutions(rows, (newRecords) => {
+    res.json({newRecords: newRecords});
   });
 }

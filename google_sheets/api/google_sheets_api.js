@@ -30,6 +30,15 @@ exports.authorize = function(credentials, callback) {
   });
 }
 
+exports.getSheetValues = async function(auth, sheetId, range) {
+  const sheets = google.sheets({ version: "v4", auth });
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: range,
+  });
+  return res.data.values;
+}
+
 /**
  * Get and store new token after prompting for user authorization, and then
  * execute the given callback with the authorized OAuth2 client.
