@@ -1,11 +1,12 @@
 module.exports = function Records() {
-  this.newRecords = 0;
-  this.duplicateRecords = 0;
-  this.blankRecords = 0;
+  this.newRecordsTotal = 0;
+  this.duplicateRecordsTotal = 0;
+  this.blankRecordsTotal = 0;
+  this.newRecords = [];
 
   this.saveRowsToCallback = (array, cb) => {
-    if ((this.newRecords + this.duplicateRecords + this.blankRecords) === array.length){
-      cb(this.newRecords);
+    if ((this.newRecordsTotal + this.duplicateRecordsTotal + this.blankRecordsTotal) === array.length){
+      cb(this.newRecordsTotal, this.newRecords);
     }
   }
 }
