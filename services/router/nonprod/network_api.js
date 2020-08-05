@@ -12,12 +12,13 @@ router.put('/api/network', (req,res) => {
       res.json({success: false, error: err})
     }
 
-    const sheetsResponse = sheets.authorize(JSON.parse(content), networkController.saveDevNetwork);
+    sheets.authorize(JSON.parse(content), (auth) => {
+      networkController.main(auth, req, res);
+    });
 
-    networkController.getDevNetwork(req, res);
   });
 });
 
-router.put('/api/network/join', networkController.joinNetworkSolutions);
+router.put('/api/network/join', networkController.mainJoin);
 
 module.exports = router;
