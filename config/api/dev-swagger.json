@@ -19,6 +19,10 @@
     {
       "name": "Network",
       "description": "API for Playground Companies in the Network"
+    },
+    {
+      "name": "Event",
+      "description": "API for Playground Events in the Network"
     }
   ],
   "schemes": [
@@ -30,6 +34,19 @@
     "application/json"
   ],
   "paths": {
+    "/event": {
+      "put": {
+        "tags": [
+          "Event"
+        ],
+        "summary": "Update Event Information",
+        "responses": {
+          "200": {
+            "description": "Event(s) Updated"
+          }
+        }
+      }
+    },
     "/solution": {
       "put": {
         "tags": [

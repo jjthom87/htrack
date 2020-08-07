@@ -6,6 +6,7 @@ const s3 = new aws.S3();
 const BUCKET = process.env.S3_BUCKET_NAME;
 
 const props = require('./../../resources/application.json');
+const logger = require('./../logging/logger.js');
 
 exports.setResourceFiles = () => {
   var secretsFiles = ["token.json", "application.json", "credentials.json"];
@@ -15,8 +16,9 @@ exports.setResourceFiles = () => {
         Bucket: BUCKET,
         Key: file
       }, (err, data) => {
-        if (err) console.error(err);
+        if (err) logger.error(err);
         fs.writeFileSync(path.join(__dirname, `./../../resources/${file}`), data.Body);
+        logger.info("Resource Files Set")
       });
     }
   });
@@ -33,7 +35,7 @@ exports.checkForResourceFileUpdates = () => {
         var params = {Bucket: BUCKET, Key: "application.json", Body: ''};
         var fileStream = fs.createReadStream(path.join(__dirname, `./../../resources/application.json`));
         fileStream.on('error', function(err) {
-          console.log('File Error', err);
+          logger.error('File Error', err);
         });
         params.Body = fileStream;
 

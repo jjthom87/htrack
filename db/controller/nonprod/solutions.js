@@ -1,7 +1,7 @@
 const Solution = require('./../../models/nonprod/Solutions.model');
 
 exports.saveNewSolutionsRecords = (row, records, array, cb) => {
-  Solution.findOne({solutionName: row[2]}).exec(function(err,result){
+  Solution.findOne({solutionName: row[2], developer: row[3]}).exec(function(err,result){
     if (!result){
       records.newRecordsTotal++;
       records.newRecords.push(row);
@@ -32,7 +32,7 @@ exports.saveNewSolutionsRecords = (row, records, array, cb) => {
 
 exports.getSolutions = async function() {
   return new Promise(function(resolve, reject) {
-    Solution.find({}).sort({name: 1}).exec(function(err, result) {
+    Solution.find({}).sort({solutionName: 1}).exec(function(err, result) {
       if (err) {
         return reject(err)
       }

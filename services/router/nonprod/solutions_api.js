@@ -4,7 +4,7 @@ var path = require('path');
 
 const sheets = require('./../../../google_sheets/api/google_sheets_api.js');
 
-var solutionsController = require('./../../../services/controller/nonprod/solutions/solutions_service.js');
+var solutionsController = require('./../../../services/controller/nonprod/solutions_service.js');
 
 router.put('/api/solution', (req,res) => {
   fs.readFile(path.join(__dirname, './../../../resources/credentials.json'), (err, content) => {

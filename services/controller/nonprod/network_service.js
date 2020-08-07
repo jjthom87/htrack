@@ -1,10 +1,10 @@
-const props = require('./../../../../resources/application.json');
-const logger = require('./../../../../config/logging/logger.js');
+const props = require('./../../../resources/application.json');
+const logger = require('./../../../config/logging/logger.js');
 
-const sheets = require('./../../../../google_sheets/api/google_sheets_api.js');
-const dbController = require('./../../../../db/controller/nonprod/network.js');
+const sheets = require('./../../../google_sheets/api/google_sheets_api.js');
+const dbController = require('./../../../db/controller/nonprod/network.js');
 
-const Records = require('./../../../records.js');
+const Records = require('./../../records.js');
 
 async function saveDevNetworkRecords(rows, cb){
   const records = new Records();

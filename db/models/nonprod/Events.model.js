@@ -1,34 +1,28 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var devNetworkSchema = new Schema({
+var devEventsSchema = new Schema({
 	modified: {
 		type: String
 	},
 	category: {
 		type: String
 	},
-	type: {
+	link: {
 		type: String
 	},
 	name: {
 		type: String
 	},
-  link: {
+  startDate: {
 		type: String
 	},
-  cityState: {
+  endDate: {
     type: String
   },
-  country: {
+  notes: {
     type: String
-  },
-	tagOne: {
-		type: String
-	},
-	tagTwo: {
-		type: String
-	}
+  }
 });
 
-module.exports = mongoose.model('devNetwork', devNetworkSchema);
+module.exports = mongoose.model('devEvents', devEventsSchema);

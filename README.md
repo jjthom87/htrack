@@ -4,8 +4,8 @@
 
 ## Mongo DB
 * https://www.w3schools.com/nodejs/nodejs_mongodb.asp
-# https://mlab.com/databases/humanitrack
-# https://medium.com/dsmli/mongodb-left-anti-join-fac00eda33fc
+* https://mlab.com/databases/humanitrack
+* https://medium.com/dsmli/mongodb-left-anti-join-fac00eda33fc
 
 ## swagger
 * https://github.com/GenFirst/swagger-to-existing-nodejs-project/blob/master/backend/swagger.json

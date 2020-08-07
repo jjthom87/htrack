@@ -4,7 +4,7 @@ const Solution = require('./../../models/nonprod/Solutions.model');
 const Records = require('./../../../services/records.js');
 
 exports.saveNewNetworkRecords = (row, records, array, cb) => {
-  Network.findOne({name: row[3]}).exec(function(err,result){
+  Network.findOne({name: row[3], link: row[4]}).exec(function(err,result){
     if (!result){
       records.newRecordsTotal++;
       records.newRecords.push(row);
