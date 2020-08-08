@@ -6,17 +6,22 @@ const s3 = new aws.S3();
 const BUCKET = process.env.S3_BUCKET_NAME;
 
 const logger = require('./../logging/logger.js');
+const resourcesDir = __dirname + "/../../resources";
 
 exports.setResourceFiles = () => {
+  if (!fs.existsSync(resourcesDir)){
+    fs.mkdirSync(resourcesDir);
+  }
+
   var secretsFiles = ["token.json", "application.json", "credentials.json"];
   secretsFiles.forEach((file) => {
-    if (!fs.existsSync(path.join(__dirname + '/../../resources/', file))) {
+    if (!fs.existsSync(path.join(resourcesDir, file))) {
       s3.getObject({
         Bucket: BUCKET,
         Key: file
       }, (err, data) => {
         if (err) logger.error(err);
-        fs.writeFileSync(path.join(__dirname + '/../../resources/', file), data.Body);
+        fs.writeFileSync(path.join(resourcesDir, file), data.Body);
         logger.info(`Resource File ${file} Set`)
       });
     }
@@ -25,7 +30,7 @@ exports.setResourceFiles = () => {
 
 exports.checkForResourceFileUpdates = () => {
   const props = require('./../../resources/application.json');
-  if(fs.existsSync(path.join(__dirname + '/../../resources/', 'application.json'))){
+  if(fs.existsSync(path.join(resourcesDir, 'application.json'))){
     s3.getObject({
       Bucket: BUCKET,
       Key: "application.json"
@@ -33,7 +38,7 @@ exports.checkForResourceFileUpdates = () => {
       if (err) console.error(err);
       if(JSON.stringify(JSON.parse(data.Body.toString())) != JSON.stringify(props)){
         var params = {Bucket: BUCKET, Key: "application.json", Body: ''};
-        var fileStream = fs.createReadStream(path.join(__dirname + '/../../resources/', 'application.json'));
+        var fileStream = fs.createReadStream(path.join(resourcesDir, 'application.json'));
         fileStream.on('error', function(err) {
           logger.error('File Error', err);
         });
