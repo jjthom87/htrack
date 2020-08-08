@@ -10,13 +10,13 @@ const logger = require('./../logging/logger.js');
 exports.setResourceFiles = () => {
   var secretsFiles = ["token.json", "application.json", "credentials.json"];
   secretsFiles.forEach((file) => {
-    if (!fs.existsSync(path.join(__dirname, `./../../resources/${file}`))) {
+    if (!fs.existsSync(__dirname + `/../../resources/${file}`)) {
       s3.getObject({
         Bucket: BUCKET,
         Key: file
       }, (err, data) => {
         if (err) logger.error(err);
-        fs.writeFileSync(path.join(__dirname, `./../../resources/${file}`), data.Body);
+        fs.writeFileSync(__dirname + `/../../resources/${file}`, data.Body);
         logger.info("Resource Files Set")
       });
     }
@@ -25,8 +25,7 @@ exports.setResourceFiles = () => {
 
 exports.checkForResourceFileUpdates = () => {
   const props = require('./../../resources/application.json');
-  
-  if(fs.existsSync(path.join(__dirname, `./../../resources/application.json`))){
+  if(fs.existsSync(__dirname + `/../../resources/application.json`)){
     s3.getObject({
       Bucket: BUCKET,
       Key: "application.json"
@@ -34,7 +33,7 @@ exports.checkForResourceFileUpdates = () => {
       if (err) console.error(err);
       if(JSON.stringify(JSON.parse(data.Body.toString())) != JSON.stringify(props)){
         var params = {Bucket: BUCKET, Key: "application.json", Body: ''};
-        var fileStream = fs.createReadStream(path.join(__dirname, `./../../resources/application.json`));
+        var fileStream = fs.createReadStream(__dirname + `/../../resources/application.json`);
         fileStream.on('error', function(err) {
           logger.error('File Error', err);
         });
