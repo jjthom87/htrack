@@ -5,7 +5,6 @@ var app = express();
 
 const apiConfig = require('./config/api/config.js');
 const resourcesConfig = require('./config/resources/config.js');
-const db = require('./db/connection.js');
 
 var PORT = process.env.PORT || 7000;
 
@@ -14,6 +13,8 @@ resourcesConfig.setResourceFiles();
 
 setTimeout(() => {
   resourcesConfig.checkForResourceFileUpdates();
+
+  const db = require('./db/connection.js');
   db.createDbConnection(app);
 
   apiConfig.setRoutes(app);

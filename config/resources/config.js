@@ -5,7 +5,6 @@ const aws = require('aws-sdk');
 const s3 = new aws.S3();
 const BUCKET = process.env.S3_BUCKET_NAME;
 
-const props = require('./../../resources/application.json');
 const logger = require('./../logging/logger.js');
 
 exports.setResourceFiles = () => {
@@ -25,6 +24,8 @@ exports.setResourceFiles = () => {
 }
 
 exports.checkForResourceFileUpdates = () => {
+  const props = require('./../../resources/application.json');
+  
   if(fs.existsSync(path.join(__dirname, `./../../resources/application.json`))){
     s3.getObject({
       Bucket: BUCKET,
