@@ -20,4 +20,4 @@ setTimeout(() => {
   apiConfig.setRoutes(app);
 
   app.listen(PORT);
-}, 3000)
+}, 10000)
