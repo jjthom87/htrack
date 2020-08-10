@@ -30,13 +30,11 @@ exports.saveNewSolutionsRecords = (row, records, array, cb) => {
   });
 }
 
-exports.getSolutions = async function() {
-  return new Promise(function(resolve, reject) {
-    Solution.find({}).sort({solutionName: 1}).exec(function(err, result) {
-      if (err) {
-        return reject(err)
-      }
-      return resolve(result);
-    });
+exports.getSolutions = function(req, res, next) {
+  Solution.find({}).sort({solutionName: 1}).exec(function(err, result) {
+    if (err) {
+      res.json({error: err});
+    }
+    res.json({result: result});
   });
 }

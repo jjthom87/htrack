@@ -6,9 +6,8 @@ const dbController = require('./../../../db/controller/nonprod/solutions.js');
 
 const Records = require('./../../records.js');
 
-async function getAllSolutions(){
-  const solutions = await dbController.getSolutions();
-  return solutions;
+exports.getAllSolutions = function(req, res, next){
+  dbController.getSolutions(req, res, next);
 }
 
 async function saveDevSolutions(rows, cb){

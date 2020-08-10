@@ -58,6 +58,17 @@
             "description": "Solution(s) Updated"
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Solution"
+        ],
+        "summary": "Get All Solution Information",
+        "responses": {
+          "200": {
+            "description": "Get All Solution(s)"
+          }
+        }
       }
     },
     "/network": {
