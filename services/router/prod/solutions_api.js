@@ -2,7 +2,7 @@ var router = require('express').Router();
 var fs = require('fs');
 var path = require('path');
 
-const sheets = require('./../../../google_sheets/api/google_sheets_api.js');
+const sheets = require('./../../../google_sheets/google_sheets_api.js');
 
 var diseaseDiagnosticsSolutionController = require('./../../../services/controller/prod/solutions/disease_diagnostic_solution_service.js');
 var medicalSuppliesController = require('./../../../services/controller/prod/solutions/medical_supplies_solution_service.js');

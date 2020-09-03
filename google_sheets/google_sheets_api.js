@@ -2,15 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const {google} = require('googleapis');
+const logger = require('./../config/logging/logger.js');
 
-const props = require('./../../resources/application.json')
+const props = require('./../resources/application.json')
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = `${path.join(__dirname, './../../resources/token.json')}`;
+const TOKEN_PATH = `${path.join(__dirname, './../resources/token.json')}`;
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -58,12 +59,12 @@ function getNewToken(oAuth2Client, callback) {
   rl.question('Enter the code from that page here: ', (code) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error while trying to retrieve access token', err);
+      if (err) return logger.error('Error while trying to retrieve access token', err);
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
+        if (err) return logger.error(err);
+        logger.log('Token stored to', TOKEN_PATH);
       });
       callback(oAuth2Client);
     });

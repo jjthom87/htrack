@@ -20,3 +20,12 @@ exports.saveNewEventsRecords = (row, records, array, cb) => {
     records.saveRowsToCallback(array, cb)
   });
 }
+
+exports.getEvents = function(req, res, next) {
+  Event.find({}).sort({name: 1}).exec(function(err, result) {
+    if (err) {
+      res.json({error: err});
+    }
+    res.json({result: result});
+  });
+}

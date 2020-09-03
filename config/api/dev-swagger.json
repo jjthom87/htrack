@@ -45,6 +45,17 @@
             "description": "Event(s) Updated"
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Event"
+        ],
+        "summary": "Get All Event Information",
+        "responses": {
+          "200": {
+            "description": "Get All Event(s)"
+          }
+        }
       }
     },
     "/solution": {
@@ -80,6 +91,17 @@
         "responses": {
           "200": {
             "description": "Network(s) Updated"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Get All Network Information",
+        "responses": {
+          "200": {
+            "description": "Get All Network Records"
           }
         }
       }

@@ -2,7 +2,7 @@ var router = require('express').Router();
 var fs = require('fs');
 var path = require('path');
 
-const sheets = require('./../../../google_sheets/api/google_sheets_api.js');
+const sheets = require('./../../../google_sheets/google_sheets_api.js');
 
 var networkController = require('./../../../services/controller/prod/network/network_service.js');
 var networkJoinController = require('./../../../services/controller/prod/network/network_join_service.js');

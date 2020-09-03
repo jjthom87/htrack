@@ -2,9 +2,11 @@ var router = require('express').Router();
 var fs = require('fs');
 var path = require('path');
 
-const sheets = require('./../../../google_sheets/api/google_sheets_api.js');
+const sheets = require('./../../../google_sheets/google_sheets_api.js');
 
-var eventsController = require('./../../../services/controller/nonprod/events_service.js');
+var eventsService = require('./../../../services/controller/nonprod/events_service.js');
+
+router.get('/api/event', eventsService.getAllEvents);
 
 router.put('/api/event', (req,res) => {
   fs.readFile(path.join(__dirname, './../../../resources/credentials.json'), (err, content) => {
@@ -13,7 +15,7 @@ router.put('/api/event', (req,res) => {
     }
 
     sheets.authorize(JSON.parse(content), (auth) => {
-        eventsController.main(auth, req, res);
+        eventsService.main(auth, req, res);
     });
 
   });
