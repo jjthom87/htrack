@@ -23,6 +23,10 @@
     {
       "name": "Event",
       "description": "API for Playground Events in the Network"
+    },
+    {
+      "name": "Publication",
+      "description": "API for Playground Publications in the Library Tab"
     }
   ],
   "schemes": [
@@ -54,6 +58,30 @@
         "responses": {
           "200": {
             "description": "Get All Event(s)"
+          }
+        }
+      }
+    },
+    "/publication": {
+      "put": {
+        "tags": [
+          "Publication"
+        ],
+        "summary": "Update Publication Information",
+        "responses": {
+          "200": {
+            "description": "Publication(s) Updated"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Publication"
+        ],
+        "summary": "Get All Publication Information",
+        "responses": {
+          "200": {
+            "description": "Get All Publication(s)"
           }
         }
       }
